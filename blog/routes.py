@@ -28,4 +28,18 @@ def create_entry():
                 flash(f'Wpis "{form.title.data}" został dodany bez publikacji')
         else:
             errors = form.errors
-    return render_template("add-post.html", form=form, errors=errors)
+    return render_template("post.html", form=form, errors=errors)
+
+@app.route("/edit-post/<int:entry_id>", methods=["GET", "POST"])
+def edit_entry(entry_id):
+    entry = Entry.query.filter_by(id=entry_id).first_or_404()
+    form = EntryForm(obj=entry)
+    errors = None
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            form.populate_obj(entry)
+            db.session.commit()
+            flash(f'Wpis "{form.title.data}" został zmieniony')
+        else:
+            errors = form.errors
+    return render_template("post.html", form=form, errors=errors)
