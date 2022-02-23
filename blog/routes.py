@@ -13,6 +13,7 @@ def home():
 def create_entry():
     form = EntryForm()
     errors = None
+    typ = "Dodaj nowy"
     if request.method == "POST":
         if form.validate_on_submit():
             entry = Entry(
@@ -28,10 +29,11 @@ def create_entry():
                 flash(f'Wpis "{form.title.data}" został dodany bez publikacji')
         else:
             errors = form.errors
-    return render_template("post.html", form=form, errors=errors)
+    return render_template("post.html", form=form, errors=errors, type=typ)
 
 @app.route("/edit-post/<int:entry_id>", methods=["GET", "POST"])
 def edit_entry(entry_id):
+    typ = "Modyfikuj"
     entry = Entry.query.filter_by(id=entry_id).first_or_404()
     form = EntryForm(obj=entry)
     errors = None
@@ -42,4 +44,4 @@ def edit_entry(entry_id):
             flash(f'Wpis "{form.title.data}" został zmieniony')
         else:
             errors = form.errors
-    return render_template("post.html", form=form, errors=errors)
+    return render_template("post.html", form=form, errors=errors, type=typ)
