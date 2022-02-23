@@ -5,3 +5,4 @@ ipython
 python-dotenv
 flask-shell-ipython
 faker
+Flask-WTF
