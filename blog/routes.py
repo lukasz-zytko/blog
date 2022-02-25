@@ -17,6 +17,13 @@ def home():
     all_posts = Entry.query.filter_by(is_published=True).order_by(Entry.pub_date.desc())
     return render_template("homepage.html", all_posts = all_posts)
 
+@app.route("/drafts/")
+@login_required
+def drafts():     
+    all_drafts = Entry.query.filter_by(is_published=False).order_by(Entry.pub_date.desc())
+    return render_template("drafts.html", all_drafts = all_drafts)
+
+
 @app.route("/add-post/", methods=["GET", "POST"])
 @app.route("/edit-post/<int:entry_id>", methods=["GET", "POST"])
 @login_required

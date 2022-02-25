@@ -9,7 +9,7 @@ def fake_entries(how_many=10):
             title = fake.sentence(),
             body = "\n".join(fake.paragraphs(15)),
             pub_date = fake.date_between(start_date="-3y"),
-            is_published = True 
+            is_published = False 
         )
         db.session.add(post)
     db.session.commit()
