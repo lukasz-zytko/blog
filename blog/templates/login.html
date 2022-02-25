@@ -2,13 +2,14 @@
 
 {% block content %}
 
-<h3>
+<h1>
   Zaloguj się
-</h3>
+</h1>
 
 {% if errors %}
    {{ errors.username }}
 {% endif %}
+<div style="padding: 20px; border: 1px solid; border-radius: 10px;">
 <form action="" method="POST">
   {{form.hidden_tag()}}
    <div class="form-group">
@@ -34,5 +35,6 @@
    </div>
    <button type="submit" class="btn btn-primary mt-5">Zaloguj</button>
 </form>
+</div>
 
 {% endblock %}

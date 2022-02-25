@@ -2,6 +2,15 @@ from flask import render_template, request, flash, redirect, url_for, session
 from blog import app, db
 from blog.models import Entry
 from blog.forms import EntryForm, LoginForm
+import functools
+
+def login_required(view_func):
+    @functools.wraps(view_func)
+    def check_permissions(*args, **kwargs):
+        if session.get("logged_in"):
+            return view_func(*args, **kwargs)
+        return redirect(url_for("login", next=request.path))
+    return check_permissions
 
 @app.route("/")
 def home():     
@@ -10,6 +19,7 @@ def home():
 
 @app.route("/add-post/", methods=["GET", "POST"])
 @app.route("/edit-post/<int:entry_id>", methods=["GET", "POST"])
+@login_required
 def add_mod_entry(entry_id=None):
     errors = None
     if not entry_id:
