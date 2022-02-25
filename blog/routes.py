@@ -1,7 +1,7 @@
-from flask import render_template, request, flash
+from flask import render_template, request, flash, redirect, url_for, session
 from blog import app, db
 from blog.models import Entry
-from blog.forms import EntryForm
+from blog.forms import EntryForm, LoginForm
 
 @app.route("/")
 def home():     
@@ -42,3 +42,26 @@ def add_mod_entry(entry_id=None):
                 errors = form.errors
         db.session.commit()
     return render_template("post.html", form=form, errors=errors, action=action)    
+
+@app.route("/login/", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    errors = None
+    next_url = request.args.get("next")
+    if request.method == "POST":
+        if form.validate_on_submit():
+            session["logged_in"] = True
+            session.permanent = True 
+            flash("Zalogowano!", "success")
+            return redirect(next_url or url_for("home"))
+        else:
+            errors = form.errors
+    return render_template("login.html", form=form, errors=errors)
+
+
+@app.route("/logout/", methods=["GET", "POST"])
+def logout():
+    if request.method == "POST":
+        session.clear()
+        flash("Wylogowano!", "success")        
+    return redirect(url_for("home"))
