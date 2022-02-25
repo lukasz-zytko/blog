@@ -1,8 +1,10 @@
+from poplib import POP3_SSL_PORT
 from flask import render_template, request, flash, redirect, url_for, session
 from blog import app, db
 from blog.models import Entry
 from blog.forms import EntryForm, LoginForm
 import functools
+import blog.fake
 
 def login_required(view_func):
     @functools.wraps(view_func)
@@ -23,11 +25,20 @@ def drafts():
     all_drafts = Entry.query.filter_by(is_published=False).order_by(Entry.pub_date.desc())
     return render_template("drafts.html", all_drafts = all_drafts)
 
+@app.route("/delete-post/<int:entry_id>", methods=["POST"])
+@login_required
+def delete_post(entry_id):
+    entry = Entry.query.get(entry_id)
+    if entry:
+        db.session.delete(entry)
+        db.session.commit()
+        flash(f'Wpis "{entry.title}" został usunięty!')
+    return redirect(url_for("home"))
 
 @app.route("/add-post/", methods=["GET", "POST"])
 @app.route("/edit-post/<int:entry_id>", methods=["GET", "POST"])
 @login_required
-def add_mod_entry(entry_id=None):
+def add_mod_post(entry_id=None):
     errors = None
     if not entry_id:
         action = "Dodaj nowy"
@@ -82,3 +93,9 @@ def logout():
         session.clear()
         flash("Wylogowano!", "success")        
     return redirect(url_for("home"))
+
+@app.route("/generate-fake/")
+def generate_fake():
+    blog.fake.fake_entries(how_many=5)
+    return redirect(url_for("drafts"))
+

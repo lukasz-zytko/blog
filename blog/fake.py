@@ -13,5 +13,3 @@ def fake_entries(how_many=10):
         )
         db.session.add(post)
     db.session.commit()
-
-fake_entries(how_many=5)
